@@ -4,8 +4,8 @@ trigger:
     - '*'
 
 stages:
-- stage: Test
-  jobs:
+#- stage: Test
+#  jobs:
   #- job: Ubuntu
   #  pool:
   #    vmImage: "ubuntu-latest"
