@@ -140,12 +140,12 @@ stages:
       matrix:
         Python36:
           cpython.version: cp36-cp36m
-        Python37:
-          cpython.version: cp37-cp37m
-        Python38:
-          cpython.version: cp38-cp38
-        Python39:
-          cpython.version: cp39-cp39
+        #Python37:
+        #  cpython.version: cp37-cp37m
+        #Python38:
+        #  cpython.version: cp38-cp38
+        #Python39:
+        #  cpython.version: cp39-cp39
     container:
       image: quay.io/pypa/manylinux2010_x86_64:latest
     steps:
@@ -177,27 +177,34 @@ stages:
       matrix:
         Python36:
           cpython.version: cp36-cp36m
+          manylinux: 'manylinux_aarch64'
         Python37:
           cpython.version: cp37-cp37m
+          manylinux: 'manylinux_aarch64'
         Python38:
           cpython.version: cp38-cp38
+          manylinux: 'manylinux_aarch64'
         Python39:
           cpython.version: cp39-cp39
-    container:
-      image: quay.io/pypa/manylinux2014_aarch64:latest
+          manylinux: 'manylinux_aarch64'
     steps:
-    - bash: /opt/python/$(cpython.version)/bin/python -m pip install --user cmake pybind11
-      displayName: Install dependencies
-    - bash: PATH=`/opt/python/$(cpython.version)/bin/python -c 'import cmake; print(cmake.CMAKE_BIN_DIR)'`:$PATH cmake --version
-      displayName: Check cmake
-    - bash: |
-        PATH=`/opt/python/$(cpython.version)/bin/python -c 'import cmake; print(cmake.CMAKE_BIN_DIR)'`:$PATH
-        /opt/python/$(cpython.version)/bin/python setup.py build_orc --build-type=release
-      displayName: Build ORC Lib
-    - bash: /opt/python/$(cpython.version)/bin/python setup.py bdist_wheel
-      displayName: Build wheel
-    - bash: auditwheel repair dist/pyorc-*.whl
-      displayName: Repair wheel
+    - script: docker run --rm --privileged hypriot/qemu-register
+      displayName: 'Registering qemu'
+    - script: |
+        docker run -v $(pwd):"${DOCKER_ROOT_DIRECTORY}":rw,z \
+                   -e HOST_USER_ID \
+                    "quay.io/pypa/manylinux2014_aarch64:latest" \
+                    bash -c "cd $DOCKER_ROOT_DIRECTORY;
+                    /opt/python/$(cpython.version)/bin/python -m pip install --user cmake pybind11 && \
+                    export PATH=`/opt/python/$(cpython.version)/bin/python -c 'import cmake; print(cmake.CMAKE_BIN_DIR)'`:$PATH cmake --version && \
+                    export PATH=`/opt/python/$(cpython.version)/bin/python -c 'import cmake; print(cmake.CMAKE_BIN_DIR)'`:$PATH && \
+                    /opt/python/$(cpython.version)/bin/python setup.py build_orc --build-type=release && \
+                    /opt/python/$(cpython.version)/bin/python setup.py bdist_wheel && \
+                    auditwheel repair dist/pyorc-*.whl && \"
+      displayName: 'Running AArch64 build'
+      env:
+        DOCKER_ROOT_DIRECTORY: "/home/source_root"
+        HOST_USER_ID: $(id -u)
     - task: CopyFiles@2
       inputs:
         sourceFolder: '$(Build.SourcesDirectory)/wheelhouse/'
