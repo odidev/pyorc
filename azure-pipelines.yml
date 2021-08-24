@@ -198,7 +198,7 @@ stages:
                     /opt/python/$(cpython.version)/bin/python -m pip install --user cmake pybind11 && \
                     export PATH=`/opt/python/$(cpython.version)/bin/python -c 'import cmake; print(cmake.CMAKE_BIN_DIR)'`:$PATH && cmake --version && \
                     export PATH=`/opt/python/$(cpython.version)/bin/python -c 'import cmake; print(cmake.CMAKE_BIN_DIR)'`:$PATH && \
-                    yum update && yum -y install gcc build-essential && \
+                    yum update && yum -y install gcc gcc-c++ && \
                     /opt/python/$(cpython.version)/bin/python setup.py build_orc --build-type=release && \
                     /opt/python/$(cpython.version)/bin/python setup.py bdist_wheel && \
                     auditwheel repair dist/pyorc-*.whl"
