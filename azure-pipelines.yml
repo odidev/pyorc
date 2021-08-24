@@ -200,7 +200,7 @@ stages:
                     export PATH=`/opt/python/$(cpython.version)/bin/python -c 'import cmake; print(cmake.CMAKE_BIN_DIR)'`:$PATH && \
                     /opt/python/$(cpython.version)/bin/python setup.py build_orc --build-type=release && \
                     /opt/python/$(cpython.version)/bin/python setup.py bdist_wheel && \
-                    auditwheel repair dist/pyorc-*.whl && \"
+                    auditwheel repair dist/pyorc-*.whl"
       displayName: 'Running AArch64 build'
       env:
         DOCKER_ROOT_DIRECTORY: "/home/source_root"
