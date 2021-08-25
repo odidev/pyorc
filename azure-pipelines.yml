@@ -52,6 +52,7 @@ stages:
  #       displayName: Set Python $(python.version)
  #     - template: .azure-pipelines/build-run-tests.yml
   - job: aarch64
+    timeoutInMinutes: 120
     pool:
       vmImage: "ubuntu-latest"
     strategy:
@@ -81,7 +82,7 @@ stages:
                     ${pythonbin} setup.py build_orc --build-type=debug && \
                     export CFLAGS="-coverage" && ${pythonbin} setup.py build -g && \
                     ${pythonbin} setup.py install --user && \
-                    export INSTALLDIR=$($(pythonbin) -c "import os, pyorc; print(os.path.dirname(pyorc.__file__))") && \
+                    export INSTALLDIR=$(${pythonbin} -c "import os, pyorc; print(os.path.dirname(pyorc.__file__))") && \
                     echo $INSTALLDIR && \
                     ${pythonbin} -m pytest -vs --junitxml=./test-results.xml --cov="$INSTALLDIR" tests/"
       displayName: 'Testing aarch64'
