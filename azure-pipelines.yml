@@ -85,7 +85,7 @@ stages:
       env:
         DOCKER_ROOT_DIRECTORY: "/home/source_root"
         HOST_USER_ID: $(id -u)
-        pythonbin: "/opt/python/$(cpython.version)/bin/python"
+        pythonbin: /opt/python/$(cpython.version)/bin/python
     - task: PublishTestResults@2
       inputs:
         testResultsFiles: test-results.xml
