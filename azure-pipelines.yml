@@ -80,7 +80,7 @@ stages:
                     export CFLAGS="-coverage" && $(pythonbin) setup.py build -g && \
                     $(pythonbin) setup.py install --user && \
                     export INSTALLDIR=$($(pythonbin) -c "import os, pyorc; print(os.path.dirname(pyorc.__file__))") && \
-                    $(pythonbin) -m pytest -vs --junitxml=./test-results.xml --cov="$INSTALLDIR" tests/ && \
+                    $(pythonbin) -m pytest -vs --junitxml=./test-results.xml --cov="$INSTALLDIR" tests/"
       displayName: 'Testing aarch64'
       env:
         DOCKER_ROOT_DIRECTORY: "/home/source_root"
