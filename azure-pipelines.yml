@@ -76,11 +76,11 @@ stages:
                    -e HOST_USER_ID \
                     "quay.io/pypa/manylinux2014_aarch64:latest" \
                     bash -c "cd $DOCKER_ROOT_DIRECTORY;
-                    $(pythonbin) -m pip install --user -U pybind11 pytest pytest-cov coverage codecov && \
-                    export CFLAGS="-coverage" && $(pythonbin) setup.py build -g && \
-                    $(pythonbin) setup.py install --user && \
+                    ${pythonbin} -m pip install --user -U pybind11 pytest pytest-cov coverage codecov && \
+                    export CFLAGS="-coverage" && ${pythonbin} setup.py build -g && \
+                    ${pythonbin} setup.py install --user && \
                     export INSTALLDIR=$($(pythonbin) -c "import os, pyorc; print(os.path.dirname(pyorc.__file__))") && \
-                    $(pythonbin) -m pytest -vs --junitxml=./test-results.xml --cov="$INSTALLDIR" tests/"
+                    ${pythonbin} -m pytest -vs --junitxml=./test-results.xml --cov="$INSTALLDIR" tests/"
       displayName: 'Testing aarch64'
       env:
         DOCKER_ROOT_DIRECTORY: "/home/source_root"
