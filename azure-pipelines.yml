@@ -76,6 +76,8 @@ stages:
                    -e HOST_USER_ID \
                     "quay.io/pypa/manylinux2014_aarch64:latest" \
                     bash -c "cd $DOCKER_ROOT_DIRECTORY;
+                    ls -l .azure-pipelines/build-run-tests.yml && \
+                    chmod 777 .azure-pipelines/build-run-tests.yml && \
                     .azure-pipelines/build-run-tests.yml"
       displayName: 'Running AArch64 build'
       env:
