@@ -4,8 +4,8 @@ trigger:
     - '*'
 
 stages:
-#- stage: Test
-#  jobs:
+- stage: Test
+  jobs:
   #- job: Ubuntu
   #  pool:
   #    vmImage: "ubuntu-latest"
@@ -51,6 +51,36 @@ stages:
  #         echo "##vso[task.setvariable variable=pythonbin]$PYTHONBIN"
  #       displayName: Set Python $(python.version)
  #     - template: .azure-pipelines/build-run-tests.yml
+  - job: aarch64
+    pool:
+      vmImage: "ubuntu-latest"
+    strategy:
+      matrix:
+        Python36:
+          cpython.version: cp36-cp36m
+          manylinux: 'manylinux_aarch64'
+        Python37:
+          cpython.version: cp37-cp37m
+          manylinux: 'manylinux_aarch64'
+        Python38:
+          cpython.version: cp38-cp38
+          manylinux: 'manylinux_aarch64'
+        Python39:
+          cpython.version: cp39-cp39
+          manylinux: 'manylinux_aarch64'
+    steps:
+    - script: docker run --rm --privileged hypriot/qemu-register
+      displayName: 'Registering qemu'
+    - script: |
+        docker run -v $(pwd):"${DOCKER_ROOT_DIRECTORY}":rw,z \
+                   -e HOST_USER_ID \
+                    "quay.io/pypa/manylinux2014_aarch64:latest" \
+                    bash -c "cd $DOCKER_ROOT_DIRECTORY;
+                    .azure-pipelines/build-run-tests.yml"
+      displayName: 'Running AArch64 build'
+      env:
+        DOCKER_ROOT_DIRECTORY: "/home/source_root"
+        HOST_USER_ID: $(id -u)
   #- job: MacOS
   #  pool:
   #    vmImage: 'macOS-latest'
