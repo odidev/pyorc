@@ -78,7 +78,7 @@ stages:
                     bash -c "cd $DOCKER_ROOT_DIRECTORY;
                     ${pythonbin} --version && \
                     ${pythonbin} -m pip install --user -U pybind11 pytest pytest-cov coverage codecov && \
-                    $(pythonbin) setup.py build_orc --build-type=debug && \
+                    ${pythonbin} setup.py build_orc --build-type=debug && \
                     export CFLAGS="-coverage" && ${pythonbin} setup.py build -g && \
                     ${pythonbin} setup.py install --user && \
                     export INSTALLDIR=$($(pythonbin) -c "import os, pyorc; print(os.path.dirname(pyorc.__file__))") && \
