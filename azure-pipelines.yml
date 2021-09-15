@@ -51,50 +51,50 @@ stages:
  #         echo "##vso[task.setvariable variable=pythonbin]$PYTHONBIN"
  #       displayName: Set Python $(python.version)
  #     - template: .azure-pipelines/build-run-tests.yml
-  - job: aarch64
-    timeoutInMinutes: 120
-    pool:
-      vmImage: "ubuntu-latest"
-    strategy:
-      matrix:
-        Python36:
-          cpython.version: cp36-cp36m
-          manylinux: 'manylinux_aarch64'
-        Python37:
-          cpython.version: cp37-cp37m
-          manylinux: 'manylinux_aarch64'
-        Python38:
-          cpython.version: cp38-cp38
-          manylinux: 'manylinux_aarch64'
-        Python39:
-          cpython.version: cp39-cp39
-          manylinux: 'manylinux_aarch64'
-    steps:
-    - script: docker run --rm --privileged hypriot/qemu-register
-      displayName: 'Registering qemu'
-    - script: |
-        docker run -v $(pwd):"${DOCKER_ROOT_DIRECTORY}":rw,z \
-                   -e HOST_USER_ID \
-                    "quay.io/pypa/manylinux2014_aarch64:latest" \
-                    bash -c "cd $DOCKER_ROOT_DIRECTORY;
-                    ${pythonbin} --version && \
-                    ${pythonbin} -m pip install --user -U pybind11 pytest pytest-cov coverage codecov && \
-                    ${pythonbin} setup.py build_orc --build-type=debug && \
-                    export CFLAGS="-coverage" && ${pythonbin} setup.py build -g && \
-                    ${pythonbin} setup.py install --user && \
-                    export INSTALLDIR=$(${pythonbin} -c "import os, pyorc; print(os.path.dirname(pyorc.__file__))") && \
-                    echo $INSTALLDIR && \
-                    ${pythonbin} -m pytest -vs --junitxml=./test-results.xml --cov="$INSTALLDIR" tests/"
-      displayName: 'Testing aarch64'
-      env:
-        DOCKER_ROOT_DIRECTORY: "/home/source_root"
-        HOST_USER_ID: $(id -u)
-        pythonbin: /opt/python/$(cpython.version)/bin/python
-    - task: PublishTestResults@2
-      inputs:
-        testResultsFiles: test-results.xml
-        testRunTitle: Tests on $(Agent.OS) with Python $(python.version)
-      condition: succeededOrFailed()
+ # - job: aarch64
+ #   timeoutInMinutes: 120
+ #   pool:
+ #     vmImage: "ubuntu-latest"
+ #   strategy:
+ #     matrix:
+ #       Python36:
+ #         cpython.version: cp36-cp36m
+ #         manylinux: 'manylinux_aarch64'
+ #       Python37:
+ #         cpython.version: cp37-cp37m
+ #         manylinux: 'manylinux_aarch64'
+ #       Python38:
+ #         cpython.version: cp38-cp38
+ #         manylinux: 'manylinux_aarch64'
+ #       Python39:
+ #         cpython.version: cp39-cp39
+ #         manylinux: 'manylinux_aarch64'
+ #   steps:
+ #   - script: docker run --rm --privileged hypriot/qemu-register
+ #     displayName: 'Registering qemu'
+ #   - script: |
+ #       docker run -v $(pwd):"${DOCKER_ROOT_DIRECTORY}":rw,z \
+ #                  -e HOST_USER_ID \
+ #                   "quay.io/pypa/manylinux2014_aarch64:latest" \
+ #                   bash -c "cd $DOCKER_ROOT_DIRECTORY;
+ #                   ${pythonbin} --version && \
+ #                   ${pythonbin} -m pip install --user -U pybind11 pytest pytest-cov coverage codecov && \
+ #                   ${pythonbin} setup.py build_orc --build-type=debug && \
+ #                   export CFLAGS="-coverage" && ${pythonbin} setup.py build -g && \
+ #                   ${pythonbin} setup.py install --user && \
+ #                   export INSTALLDIR=$(${pythonbin} -c "import os, pyorc; print(os.path.dirname(pyorc.__file__))") && \
+ #                   echo $INSTALLDIR && \
+ #                   ${pythonbin} -m pytest -vs --junitxml=./test-results.xml --cov="$INSTALLDIR" tests/"
+ #     displayName: 'Testing aarch64'
+ #     env:
+ #       DOCKER_ROOT_DIRECTORY: "/home/source_root"
+ #       HOST_USER_ID: $(id -u)
+ #       pythonbin: /opt/python/$(cpython.version)/bin/python
+ #   - task: PublishTestResults@2
+ #     inputs:
+ #       testResultsFiles: test-results.xml
+ #       testRunTitle: Tests on $(Agent.OS) with Python $(python.version)
+ #     condition: succeededOrFailed()
 
   #- job: MacOS
   #  pool:
@@ -222,16 +222,12 @@ stages:
       matrix:
         Python36:
           cpython.version: cp36-cp36m
-          manylinux: 'manylinux_aarch64'
         Python37:
           cpython.version: cp37-cp37m
-          manylinux: 'manylinux_aarch64'
         Python38:
           cpython.version: cp38-cp38
-          manylinux: 'manylinux_aarch64'
         Python39:
           cpython.version: cp39-cp39
-          manylinux: 'manylinux_aarch64'
     steps:
     - script: docker run --rm --privileged hypriot/qemu-register
       displayName: 'Registering qemu'
